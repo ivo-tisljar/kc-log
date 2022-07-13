@@ -4,10 +4,17 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
 
 type
-  TForm1 = class(TForm)
+  TMainForm = class(TForm)
+    Memo: TMemo;
+    ButtonObrada: TButton;
+    EditDirectory: TEdit;
+    Label1: TLabel;
+    LabelDirectory: TLabel;
+    procedure ButtonObradaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -15,10 +22,22 @@ type
   end;
 
 var
-  Form1: TForm1;
+  MainForm: TMainForm;
+
 
 implementation
 
+uses
+  KcLogFiles;
+
 {$R *.dfm}
+
+
+procedure TMainForm.ButtonObradaClick(Sender: TObject);
+begin
+  LogMemo := Memo;
+  LoadNewLogFiles(EditDirectory.Text);
+end;
+
 
 end.

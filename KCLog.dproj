@@ -101,12 +101,13 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="KCLogMain.pas">
-            <Form>Form1</Form>
+            <Form>MainForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="KcLogFile.pas"/>
         <DCCReference Include="KcLogSavjetnik.pas"/>
         <DCCReference Include="KcLogFiles.pas"/>
+        <DCCReference Include="KcLogEvent.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
