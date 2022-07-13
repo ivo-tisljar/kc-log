@@ -1,11 +1,11 @@
-unit KcLogFiles;
+unit _LogFiles;
 
 interface
 
 uses
   System.Generics.Collections,
   Vcl.StdCtrls, Vcl.Forms,
-  KcLogFile;
+  _LogFile;
 
 
 const
@@ -24,6 +24,7 @@ var
   LogFiles: TLogFiles<TLogFile>;
   LogMemo: TMemo;
   LogForm: TForm;
+
 
 procedure LoadNewLogFiles(const DirectoryName:string);
 
@@ -74,9 +75,6 @@ initialization
 finalization
   FreeAndNil(LogFiles);
 
-
-end.
-
 (*
     TTask.Run(
       procedure
@@ -90,3 +88,6 @@ end.
           end);
       end);
 *)
+
+end.
+

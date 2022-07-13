@@ -1,4 +1,4 @@
-unit KCLogMain;
+unit Main;
 
 interface
 
@@ -28,7 +28,7 @@ var
 implementation
 
 uses
-  KcLogFiles;
+  _LogFiles;
 
 {$R *.dfm}
 

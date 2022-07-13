@@ -2,11 +2,12 @@ program KCLog;
 
 uses
   Vcl.Forms,
-  KCLogMain in 'KCLogMain.pas' {MainForm},
-  KcLogFile in 'KcLogFile.pas',
-  KcLogSavjetnik in 'KcLogSavjetnik.pas',
-  KcLogFiles in 'KcLogFiles.pas',
-  KcLogEvent in 'KcLogEvent.pas';
+  Main in 'Main.pas' {MainForm},
+  _LogFile in '_LogFile.pas',
+  _UOperater in '_UOperater.pas',
+  _LogFiles in '_LogFiles.pas',
+  _Event in '_Event.pas',
+  _EventType in '_EventType.pas';
 
 {$R *.res}
 

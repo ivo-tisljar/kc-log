@@ -1,6 +1,9 @@
-unit KcLogFile;
+unit _LogFile;
 
 interface
+
+uses
+  	System.Classes;
 
 
 const
@@ -14,9 +17,11 @@ type
       Pin: byte;
       IsRemote: boolean;
       Date: integer;
-    public
       constructor Create(const aPin: byte; const aIsRemote: boolean; const aDate: integer); overload;
       constructor Create(const FileName: string); overload;
+      procedure   ParseLogFile(const DirectoryName, FileName: string);
+      procedure   ParseStringList(const StringList: TStringList);
+    public
       constructor Create(const DirectoryName, FileName: string); overload;
   end;
 
@@ -24,7 +29,7 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  	System.SysUtils;
 
 
 constructor TLogFile.Create(const aPin: byte; const aIsRemote: boolean; const aDate: integer);
@@ -48,11 +53,29 @@ end;
 constructor TLogFile.Create(const DirectoryName, FileName: string);
 begin
   Create(FileName);
-(*
-    StrToInt(Copy(FileName,10,2)),
-    Length(FileName) = RemoteSessionFileNameLength,
-    Century0000 + StrToInt(Copy(FileName, Length(FileName) + DateOffset, 6)));
-*)
+  ParseLogFile(DirectoryName, FileName);
+end;
+
+
+procedure TLogFile.ParseLogFile(const DirectoryName, FileName: string);
+var
+  StringList: TStringList;
+begin
+  StringList := TStringList.Create(true);
+  StringList.LoadFromFile(DirectoryName + FileName);
+  ParseStringList(StringList);
+  FreeAndNil(StringList);
+end;
+
+
+procedure TLogFile.ParseStringList(const StringList: TStringList);
+var
+  i: integer;
+begin
+  for i := 0 to StringList.Count - 1 do
+    begin
+
+    end;
 end;
 
 
