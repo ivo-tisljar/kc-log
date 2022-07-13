@@ -6,8 +6,9 @@ uses
   _LogFile in '_LogFile.pas',
   _UOperater in '_UOperater.pas',
   _LogFiles in '_LogFiles.pas',
-  _Event in '_Event.pas',
-  _EventType in '_EventType.pas';
+  _LogEvent in '_LogEvent.pas',
+  _EventType in '_EventType.pas',
+  _LogEvents in '_LogEvents.pas';
 
 {$R *.res}
 

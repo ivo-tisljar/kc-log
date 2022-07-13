@@ -12,7 +12,7 @@ const
   LogFileNameMask = 'SURADNIK*.LOG';    // filename mask so that I would fetch log files ONLY
 
 type
-  TLogFiles<T: TLogFile> = class (TObjectList<T>)
+  TLogFiles<T: TLogFile> = class(TObjectList<T>)
     private
       DirectoryName: string;
     public
@@ -56,6 +56,9 @@ procedure TLogFiles<T>.LoadNewLogFiles;
 var
   SearchRec: TSearchRec;
 begin
+
+LogFileCount:=0;
+
   if FindFirst(DirectoryName + LogFileNameMask, faNormal, SearchRec) <> 0 then
     Exit;
 
@@ -84,7 +87,6 @@ finalization
           procedure
           begin
             LogMemo.Text := LogMemo.Text + #13#10 + SearchRec.Name;
-
           end);
       end);
 *)

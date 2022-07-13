@@ -107,8 +107,9 @@
         <DCCReference Include="_LogFile.pas"/>
         <DCCReference Include="_UOperater.pas"/>
         <DCCReference Include="_LogFiles.pas"/>
-        <DCCReference Include="_Event.pas"/>
+        <DCCReference Include="_LogEvent.pas"/>
         <DCCReference Include="_EventType.pas"/>
+        <DCCReference Include="_LogEvents.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

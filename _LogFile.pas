@@ -3,7 +3,8 @@ unit _LogFile;
 interface
 
 uses
-  	System.Classes;
+  	System.Classes,
+    _LogEvents, _LogEvent;
 
 
 const
@@ -17,13 +18,17 @@ type
       Pin: byte;
       IsRemote: boolean;
       Date: integer;
+      LogEvents: TLogEvents<TLogEvent>;
       constructor Create(const aPin: byte; const aIsRemote: boolean; const aDate: integer); overload;
       constructor Create(const FileName: string); overload;
+      destructor  Destroy; override;
       procedure   ParseLogFile(const DirectoryName, FileName: string);
       procedure   ParseStringList(const StringList: TStringList);
     public
       constructor Create(const DirectoryName, FileName: string); overload;
   end;
+
+  var LogFileCount: integer;
 
 
 implementation
@@ -38,6 +43,7 @@ begin
   Pin := aPin;
   IsRemote := aIsRemote;
   Date := aDate;
+  LogEvents := TLogEvents<TLogEvent>.Create;
 end;
 
 
@@ -57,14 +63,30 @@ begin
 end;
 
 
+destructor TLogFile.Destroy;
+  begin
+    FreeAndNil(LogEvents);
+    inherited Destroy;
+  end;
+
+
 procedure TLogFile.ParseLogFile(const DirectoryName, FileName: string);
 var
   StringList: TStringList;
 begin
-  StringList := TStringList.Create(true);
-  StringList.LoadFromFile(DirectoryName + FileName);
-  ParseStringList(StringList);
-  FreeAndNil(StringList);
+  try
+    try
+inc(LogFileCount);
+      StringList := TStringList.Create(true);
+      StringList.LoadFromFile(DirectoryName + FileName);
+      ParseStringList(StringList);
+    except
+      on E:Exception do
+        raise Exception.Create(IntToStr(LogFileCount) + '. File: ' + FileName + #13#10#13#10 + E.Message);
+    end;
+  finally
+    FreeAndNil(StringList);
+  end;
 end;
 
 
@@ -73,9 +95,7 @@ var
   i: integer;
 begin
   for i := 0 to StringList.Count - 1 do
-    begin
-
-    end;
+    LogEvents.AddEvent(StringList[i]);
 end;
 
 
