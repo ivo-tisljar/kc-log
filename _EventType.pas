@@ -10,86 +10,82 @@ type
     etConversationStart,
     etConversationEnd,
     etSwitchStart,
+
     etSwitchPickDomain,
-    etSwitchNoDomain,
     etSwitchPickOperator,
-    etSwitchNoOperator,
     etSwitchSuccessDomain,
     etSwitchSuccessOperator,
+    etSwitchInvalidDomain,
+
+    etSwitchInvalidOperator,
     etSwitchOperatorSelf,
     etSwitchOperatorAbsent,
     etSwitchOperatorBussy,
     etSwitchInvalid,
+
     etResearchStart,
     etResearchEnd,
     etResearchAbandon,
     etMiniBreakStart,
     etIdleStart,
-    etExotic01,
-    etExotic02,
-    etExotic03,
-    etExotic04,
-    etExotic05,
-    etExotic06,
-    etExotic07,
-    etExotic08,
-    etExotic09,
-    etExotic10,
-    etExotic11,
-    etExotic12,
-    etExotic13,
-    etExotic14,
-    etExotic15,
     etNil);
-
-const
-  EventLabel : array[TEventType] of string = (
-    'poèetak rada',
-    'prekid rada',
-    'ušao u razgovor sa strankom',
-    'prekinuo razgovor sa #',
-    'ušao u prespajanje stranke -',
-    'prespajanje - podruèje',
-    'prespajanje - podruèje #',
-    'prespajanje za',
-    'prespajanje za #',
-    'uspješno prespojeno',
-    'prespojeno na',
-    'probao prespojiti sam sebi, a ne ide',
-    'probao prespojiti suradniku koji trenutno ne radi',
-    'suradnika veæ netko èeka - nije prespojeno',
-    'neispravan pokušaj prespajanja',
-    'stavio stranku na èekanje -',
-    'vratio stranku sa èekanja -',
-    'stranka otišla sa èekanja - prekinula -',
-    'ušao u pauzu izmeðu razgovora',
-    'ušao u èekanje stranke',
-    'prespajanje za 1#',
-    'prespajanje za 2#',
-    'prespajanje za 3#',
-    'prespajanje za 4#',
-    'prespajanje za 5#',
-    'prespajanje za 9#',
-    'prespajanje za ##',
-    'prespajanje za 1c',
-    'prespajanje za 3',
-    'prespajanje za 1*',
-    'prespajanje za 3*',
-    'prespajanje za 9*',
-    'prespajanje za *',
-    'prespajanje - podruèje a',
-    'prespajanje - podruèje c',
-    'nil'
-  );
 
 
 function GetEventType(aEventLabel: string): TEventType;
+function GetEventTypeID(EventType: TEventType): integer;
 
 
 implementation
 
 uses
-  System.SysUtils;
+  System.SysUtils, System.StrUtils;
+
+
+type
+  TEventRecord = record
+    ID: byte;
+    EventLabel: string;
+  end;
+
+const
+  Events : array[TEventType] of TEventRecord = (
+    (ID: 11; EventLabel: 'poèetak rada'),
+    (ID: 12; EventLabel: 'prekid rada'),
+    (ID: 21; EventLabel: 'ušao u razgovor sa strankom'),
+    (ID: 22; EventLabel: 'prekinuo razgovor sa #'),
+    (ID: 31; EventLabel: 'ušao u prespajanje stranke -'),
+
+    (ID: 32; EventLabel: 'prespajanje - podruèje'),
+    (ID: 33; EventLabel: 'prespajanje za'),
+    (ID: 34; EventLabel: 'uspješno prespojeno'),
+    (ID: 35; EventLabel: 'prespojeno na'),
+    (ID: 41; EventLabel: 'prespajanje - podruèje - ne postoji'),
+
+    (ID: 42; EventLabel: 'prespajanje za - ne postoji'),
+    (ID: 43; EventLabel: 'probao prespojiti sam sebi, a ne ide'),
+    (ID: 44; EventLabel: 'probao prespojiti suradniku koji trenutno ne radi'),
+    (ID: 45; EventLabel: 'suradnika veæ netko èeka - nije prespojeno'),
+    (ID: 46; EventLabel: 'neispravan pokušaj prespajanja'),
+
+    (ID: 51; EventLabel: 'stavio stranku na èekanje -'),
+    (ID: 52; EventLabel: 'vratio stranku sa èekanja -'),
+    (ID: 53; EventLabel: 'stranka otišla sa èekanja - prekinula -'),
+    (ID: 97; EventLabel: 'ušao u pauzu izmeðu razgovora'),
+    (ID: 98; EventLabel: 'ušao u èekanje stranke'),
+    (ID: 00; EventLabel: 'nil')
+  );
+
+
+function GetExceptionalEventType(aEventLabel: string): TEventType;
+begin
+  if LeftStr(aEventLabel, Length (Events[etSwitchPickDomain].EventLabel)) = Events[etSwitchPickDomain].EventLabel then
+    Result := etSwitchInvalidDomain
+  else
+    if LeftStr(aEventLabel, Length (Events[etSwitchPickOperator].EventLabel)) = Events[etSwitchPickOperator].EventLabel then
+      Result := etSwitchInvalidOperator
+    else
+      raise Exception.Create('Unknown event: ''' + aEventLabel + '''');
+end;
 
 
 function GetEventType(aEventLabel: string): TEventType;
@@ -97,19 +93,23 @@ var
   i: TEventType;
 begin
   aEventLabel := Trim(AnsiLowerCase(aEventLabel)).Replace(#32#32,#32);
-  Result := etNil;
   i := Low(TEventType);
   while i < High(TEventType) do
     begin
-      if aEventLabel = EventLabel[i] then
+      if aEventLabel = Events[i].EventLabel then
         begin
           Result := i;
           Exit;
         end;
       Inc(i);
     end;
-  raise Exception.Create('Unknown event: ''' + aEventLabel + '''');
+  Result := GetExceptionalEventType(aEventLabel);
 end;
 
+
+function GetEventTypeID(EventType: TEventType): integer;
+begin
+  Result := Events[EventType].ID;
+end;
 
 end.

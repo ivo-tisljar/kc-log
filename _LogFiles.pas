@@ -17,6 +17,7 @@ type
       DirectoryName: string;
     public
       constructor Create(const aDirectoryName:string);
+      procedure ImportLogsIntoSQL;
       procedure LoadNewLogFiles;
   end;
 
@@ -26,6 +27,7 @@ var
   LogForm: TForm;
 
 
+procedure ImportLogsIntoSQL;
 procedure LoadNewLogFiles(const DirectoryName:string);
 
 
@@ -34,6 +36,12 @@ implementation
 uses
   System.SysUtils, System.Classes,
   System.Threading;
+
+
+procedure ImportLogsIntoSQL;
+  begin
+    LogFiles.ImportLogsIntoSQL;
+  end;
 
 
 procedure LoadNewLogFiles(const DirectoryName:string);
@@ -52,13 +60,19 @@ begin
 end;
 
 
+procedure TLogFiles<T>.ImportLogsIntoSQL;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    Items[i].ImportLogIntoSQL;
+end;
+
+
 procedure TLogFiles<T>.LoadNewLogFiles;
 var
   SearchRec: TSearchRec;
 begin
-
-LogFileCount:=0;
-
   if FindFirst(DirectoryName + LogFileNameMask, faNormal, SearchRec) <> 0 then
     Exit;
 

@@ -21,20 +21,24 @@ type
       LogEvents: TLogEvents<TLogEvent>;
       constructor Create(const aPin: byte; const aIsRemote: boolean; const aDate: integer); overload;
       constructor Create(const FileName: string); overload;
-      destructor  Destroy; override;
+      function    GetDoesLogFileExistsSQL: string;
+      function    GetInsertSQL: string;
+      function    GetInsertedIDSQL: string;
+      function    LogFileExists: boolean;
       procedure   ParseLogFile(const DirectoryName, FileName: string);
       procedure   ParseStringList(const StringList: TStringList);
     public
       constructor Create(const DirectoryName, FileName: string); overload;
+      destructor  Destroy; override;
+      procedure   ImportLogIntoSQL;
   end;
-
-  var LogFileCount: integer;
 
 
 implementation
 
 uses
-  	System.SysUtils;
+  	System.SysUtils,
+    _DataModule;
 
 
 constructor TLogFile.Create(const aPin: byte; const aIsRemote: boolean; const aDate: integer);
@@ -64,10 +68,53 @@ end;
 
 
 destructor TLogFile.Destroy;
-  begin
-    FreeAndNil(LogEvents);
-    inherited Destroy;
-  end;
+begin
+  FreeAndNil(LogEvents);
+  inherited Destroy;
+end;
+
+
+function TLogFile.GetDoesLogFileExistsSQL: string;
+begin
+  Result := 'SELECT ' +
+                'Count(*) AS RecCount ' +
+            'FROM ' +
+                'LogFile ' +
+            'WHERE ' +
+                'PinID = ' + IntToStr(Pin) + ' And Date = ' + IntToStr(Date)+';';
+end;
+
+
+function TLogFile.GetInsertSQL: string;
+begin
+  Result := 'INSERT INTO LogFile(PinID, IsRemote, Date) Values (' +
+    IntToStr(Pin) + ',' +
+    IntToStr(Ord(IsRemote)) + ',' +
+    IntToStr(Date) + ');';
+end;
+
+
+function TLogFile.GetInsertedIDSQL: string;
+begin
+  Result := 'SELECT SCOPE_IDENTITY() AS LogFileID;';
+end;
+
+
+procedure TLogFile.ImportLogIntoSQL;
+var
+  LogFileID: integer;
+begin
+  if LogFileExists then
+    Exit;
+  LogFileID := DataLink.ExecCommandAndReturnInteger (GetInsertSQL + GetInsertedIDSQL, 'LogFileID');
+  DataLink.ExecCommand (LogEvents.GetInsertSQL(LogFileID));
+end;
+
+
+function TLogFile.LogFileExists: boolean;
+begin
+  Result := (DataLink.ExecCommandAndReturnInteger(GetDoesLogFileExistsSQL, 'RecCount') <> 0);
+end;
 
 
 procedure TLogFile.ParseLogFile(const DirectoryName, FileName: string);
@@ -76,13 +123,12 @@ var
 begin
   try
     try
-inc(LogFileCount);
       StringList := TStringList.Create(true);
       StringList.LoadFromFile(DirectoryName + FileName);
       ParseStringList(StringList);
     except
       on E:Exception do
-        raise Exception.Create(IntToStr(LogFileCount) + '. File: ' + FileName + #13#10#13#10 + E.Message);
+        raise Exception.Create('. File: ' + FileName + #13#10#13#10 + E.Message);
     end;
   finally
     FreeAndNil(StringList);

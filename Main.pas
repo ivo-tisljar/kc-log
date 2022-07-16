@@ -35,8 +35,10 @@ uses
 
 procedure TMainForm.ButtonObradaClick(Sender: TObject);
 begin
+  ButtonObrada.Enabled := false;
   LogMemo := Memo;
   LoadNewLogFiles(EditDirectory.Text);
+  ImportLogsIntoSQL;
 end;
 
 
