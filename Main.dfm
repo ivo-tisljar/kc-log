@@ -52,6 +52,6 @@ object MainForm: TMainForm
     Width = 369
     Height = 23
     TabOrder = 2
-    Text = 'D:\KC\KC-C-Matel-VoxFiles-LogFiles 2022-07-06\SURADNICI\'
+    Text = 'D:\KC\SURADNICI\'
   end
 end

@@ -81,7 +81,7 @@ begin
             'FROM ' +
                 'LogFile ' +
             'WHERE ' +
-                'PinID = ' + IntToStr(Pin) + ' And Date = ' + IntToStr(Date)+';';
+                'PinID = ' + IntToStr(Pin) + ' And Date = ' + IntToStr(Date) + ' And IsRemote = ' + IntToStr(Ord(IsRemote)) + ';';
 end;
 
 
