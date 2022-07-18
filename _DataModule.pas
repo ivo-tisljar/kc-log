@@ -9,13 +9,13 @@ uses
 
 
 type
-  TDataLink = class(TDataModule)
+  TDataLink = class (TDataModule)
     FDConnection: TFDConnection;
     FDQuery: TFDQuery;
   private
   public
-    procedure ExecCommand(const SQL: string);
-    function  ExecCommandAndReturnInteger(const SQL, FieldName: string): integer;
+    procedure ExecCommand (const SQL: string);
+    function  ExecCommandAndReturnInteger (const SQL, FieldName: string): integer;
   end;
 
 var
@@ -24,31 +24,34 @@ var
 
 implementation
 
+uses
+  itSystem;
+
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
 
 
-procedure TDataLink.ExecCommand(const SQL: string);
+procedure TDataLink.ExecCommand (const SQL: string);
 begin
   try
-    FDQuery.ExecSQL(SQL);
+    FDQuery.ExecSQL (SQL);
   except
     on E:Exception do
-      raise Exception.Create('ExecCommand SQL: ' + SQL + #13#10#13#10 + E.Message);
+      raise Exception.Create ('ExecCommand SQL: ' + SQL + CrLf + CrLf + E.Message);
   end;
 end;
 
 
-function TDataLink.ExecCommandAndReturnInteger(const SQL, FieldName: string): integer;
+function TDataLink.ExecCommandAndReturnInteger (const SQL, FieldName: string): integer;
 begin
   try
     FDQuery.Open (SQL);
-    Result := FDQuery.FieldByName(FieldName).AsInteger;
+    Result := FDQuery.FieldByName (FieldName).AsInteger;
     FDQuery.Close;
   except
     on E:Exception do
-      raise Exception.Create('ExecCommandAndReturnInteger SQL: ' + SQL + #13#10#13#10 + E.Message);
+      raise Exception.Create ('ExecCommandAndReturnInteger SQL: ' + SQL + CrLf + CrLf + E.Message);
   end;
 end;
 

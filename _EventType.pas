@@ -31,8 +31,8 @@ type
     etNil);
 
 
-function GetEventType(aEventLabel: string): TEventType;
-function GetEventTypeID(EventType: TEventType): integer;
+function GetEventType (aEventLabel: string): TEventType;
+function GetEventTypeID (EventType: TEventType): integer;
 
 
 implementation
@@ -76,38 +76,38 @@ const
   );
 
 
-function GetExceptionalEventType(aEventLabel: string): TEventType;
+function GetExceptionalEventType (aEventLabel: string): TEventType;
 begin
-  if LeftStr(aEventLabel, Length (Events[etSwitchPickDomain].EventLabel)) = Events[etSwitchPickDomain].EventLabel then
+  if LeftStr (aEventLabel, Length (Events[etSwitchPickDomain].EventLabel)) = Events[etSwitchPickDomain].EventLabel then
     Result := etSwitchInvalidDomain
   else
-    if LeftStr(aEventLabel, Length (Events[etSwitchPickOperator].EventLabel)) = Events[etSwitchPickOperator].EventLabel then
+    if LeftStr (aEventLabel, Length (Events[etSwitchPickOperator].EventLabel)) = Events[etSwitchPickOperator].EventLabel then
       Result := etSwitchInvalidOperator
     else
-      raise Exception.Create('Unknown event: ''' + aEventLabel + '''');
+      raise Exception.Create ('Unknown event: ''' + aEventLabel + '''');
 end;
 
 
-function GetEventType(aEventLabel: string): TEventType;
+function GetEventType (aEventLabel: string): TEventType;
 var
   i: TEventType;
 begin
-  aEventLabel := Trim(AnsiLowerCase(aEventLabel)).Replace(#32#32,#32);
-  i := Low(TEventType);
-  while i < High(TEventType) do
+  aEventLabel := Trim (AnsiLowerCase (aEventLabel)).Replace (#32#32,#32);
+  i := Low (TEventType);
+  while i < High (TEventType) do
     begin
       if aEventLabel = Events[i].EventLabel then
         begin
           Result := i;
           Exit;
         end;
-      Inc(i);
+      Inc (i);
     end;
-  Result := GetExceptionalEventType(aEventLabel);
+  Result := GetExceptionalEventType (aEventLabel);
 end;
 
 
-function GetEventTypeID(EventType: TEventType): integer;
+function GetEventTypeID (EventType: TEventType): integer;
 begin
   Result := Events[EventType].ID;
 end;

@@ -12,11 +12,11 @@ const
   LogFileNameMask = 'SURADNIK*.LOG';    // filename mask so that I would fetch log files ONLY
 
 type
-  TLogFiles<T: TLogFile> = class(TObjectList<T>)
+  TLogFiles<T: TLogFile> = class (TObjectList<T>)
     private
       DirectoryName: string;
     public
-      constructor Create(const aDirectoryName:string);
+      constructor Create (const aDirectoryName:string);
       procedure ImportLogsIntoSQL;
       procedure LoadNewLogFiles;
   end;
@@ -27,33 +27,40 @@ var
   LogForm: TForm;
 
 
+procedure CloseLogFiles;
 procedure ImportLogsIntoSQL;
-procedure LoadNewLogFiles(const DirectoryName:string);
+procedure LoadNewLogFiles (const DirectoryName:string);
 
 
 implementation
 
 uses
   System.SysUtils, System.Classes,
-  System.Threading;
+  itSystem;
+
+
+procedure CloseLogFiles;
+begin
+  FreeAndNil (LogFiles);
+end;
 
 
 procedure ImportLogsIntoSQL;
-  begin
-    LogFiles.ImportLogsIntoSQL;
-  end;
+begin
+  LogFiles.ImportLogsIntoSQL;
+end;
 
 
-procedure LoadNewLogFiles(const DirectoryName:string);
+procedure LoadNewLogFiles (const DirectoryName:string);
 begin
   if LogFiles = nil then
-    LogFiles := TLogFiles<TLogFile>.Create(DirectoryName);
+    LogFiles := TLogFiles<TLogFile>.Create (DirectoryName);
 
   LogFiles.LoadNewLogFiles;
 end;
 
 
-constructor TLogFiles<T>.Create(const aDirectoryName:string);
+constructor TLogFiles<T>.Create (const aDirectoryName:string);
 begin
   inherited Create;
   DirectoryName := aDirectoryName;
@@ -73,37 +80,21 @@ procedure TLogFiles<T>.LoadNewLogFiles;
 var
   SearchRec: TSearchRec;
 begin
-  if FindFirst(DirectoryName + LogFileNameMask, faNormal, SearchRec) <> 0 then
+  if FindFirst (DirectoryName + LogFileNameMask, faNormal, SearchRec) <> 0 then
     Exit;
 
   repeat
-    Add(TLogFile.Create(DirectoryName, SearchRec.Name));
-    LogMemo.Text := LogMemo.Text + #13#10 + SearchRec.Name;
-  until FindNext(SearchRec) <> 0;
+    Add (TLogFile.Create (DirectoryName, SearchRec.Name));
+    LogMemo.Text := LogMemo.Text + CrLf + SearchRec.Name;
+  until FindNext (SearchRec) <> 0;
 
-  findClose(SearchRec);
+  findClose (SearchRec);
 end;
 
 
 initialization
   LogFiles := nil;
 
-
-finalization
-  FreeAndNil(LogFiles);
-
-(*
-    TTask.Run(
-      procedure
-      begin
-        Add(TLogFile.Create(DirectoryName, SearchRec.Name));
-        TThread.Synchronize(nil,
-          procedure
-          begin
-            LogMemo.Text := LogMemo.Text + #13#10 + SearchRec.Name;
-          end);
-      end);
-*)
 
 end.
 

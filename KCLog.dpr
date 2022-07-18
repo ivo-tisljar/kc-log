@@ -17,7 +17,7 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TDataLink, DataLink);
+  Application.CreateForm (TMainForm, MainForm);
+  Application.CreateForm (TDataLink, DataLink);
   Application.Run;
 end.

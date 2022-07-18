@@ -8,38 +8,39 @@ uses
 
 
 type
-  TLogEvents<T: TLogEvent> = class(TObjectList<T>)
+  TLogEvents<T: TLogEvent> = class (TObjectList<T>)
     private
     public
-      procedure AddEvent(const EventString: string);
-      function  GetInsertSQL(const LogFileID: integer): string;
+      procedure AddEvent (const EventString: string);
+      function  GetInsertSQL (const LogFileID: integer): string;
   end;
 
 
 implementation
 
 uses
-  System.SysUtils, System.Classes;
+  System.SysUtils, System.Classes,
+  itSystem;
 
 
-procedure TLogEvents<T>.AddEvent(const EventString: string);
+procedure TLogEvents<T>.AddEvent (const EventString: string);
 begin
   try
-    Add(TLogEvent.Create(Trim(EventString)));
+    Add (TLogEvent.Create (Trim (EventString)));
   except
     on E:Exception do
-      raise Exception.Create('Event: ''' + EventString + ''''#13#10#13#10 + E.Message);
+      raise Exception.Create ('Event: ''' + EventString + '''' + CrLf + CrLf + E.Message);
   end;
 end;
 
 
-function TLogEvents<T>.GetInsertSQL(const LogFileID: integer): string;
+function TLogEvents<T>.GetInsertSQL (const LogFileID: integer): string;
 var
   i: integer;
 begin
   Result := '';
   for i := 0 to Count - 1 do
-    Result := Result + Items[i].GetInsertSQL(LogFileID, i) + #13#10;
+    Result := Result + Items[i].GetInsertSQL (LogFileID, i) + CrLf;
 end;
 
 

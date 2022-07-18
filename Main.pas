@@ -8,13 +8,13 @@ uses
 
 
 type
-  TMainForm = class(TForm)
+  TMainForm = class (TForm)
     Memo: TMemo;
     ButtonObrada: TButton;
     EditDirectory: TEdit;
     Label1: TLabel;
     LabelDirectory: TLabel;
-    procedure ButtonObradaClick(Sender: TObject);
+    procedure ButtonObradaClick (Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,12 +33,14 @@ uses
 {$R *.dfm}
 
 
-procedure TMainForm.ButtonObradaClick(Sender: TObject);
+procedure TMainForm.ButtonObradaClick (Sender: TObject);
 begin
   ButtonObrada.Enabled := false;
   LogMemo := Memo;
-  LoadNewLogFiles(EditDirectory.Text);
+  LoadNewLogFiles (EditDirectory.Text);
   ImportLogsIntoSQL;
+  CloseLogFiles;
+  ButtonObrada.Enabled := true;
 end;
 
 
