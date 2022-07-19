@@ -31,7 +31,7 @@ type
     etNil);
 
 
-function GetEventType (aEventLabel: string): TEventType;
+function GetEventType (EventLabel: string): TEventType;
 function GetEventTypeID (EventType: TEventType): integer;
 
 
@@ -76,34 +76,34 @@ const
   );
 
 
-function GetExceptionalEventType (aEventLabel: string): TEventType;
+function GetExceptionalEventType (const EventLabel: string): TEventType;
 begin
-  if LeftStr (aEventLabel, Length (Events[etSwitchPickDomain].EventLabel)) = Events[etSwitchPickDomain].EventLabel then
+  if LeftStr (EventLabel, Length (Events[etSwitchPickDomain].EventLabel)) = Events[etSwitchPickDomain].EventLabel then
     Result := etSwitchInvalidDomain
   else
-    if LeftStr (aEventLabel, Length (Events[etSwitchPickOperator].EventLabel)) = Events[etSwitchPickOperator].EventLabel then
+    if LeftStr (EventLabel, Length (Events[etSwitchPickOperator].EventLabel)) = Events[etSwitchPickOperator].EventLabel then
       Result := etSwitchInvalidOperator
     else
-      raise Exception.Create ('Unknown event: ''' + aEventLabel + '''');
+      raise Exception.Create ('Unknown event: ''' + EventLabel + '''');
 end;
 
 
-function GetEventType (aEventLabel: string): TEventType;
+function GetEventType (EventLabel: string): TEventType;
 var
   i: TEventType;
 begin
-  aEventLabel := Trim (AnsiLowerCase (aEventLabel)).Replace (#32#32,#32);
+  EventLabel := Trim (AnsiLowerCase (EventLabel)).Replace (#32#32, #32);
   i := Low (TEventType);
   while i < High (TEventType) do
     begin
-      if aEventLabel = Events[i].EventLabel then
+      if EventLabel = Events[i].EventLabel then
         begin
           Result := i;
           Exit;
         end;
       Inc (i);
     end;
-  Result := GetExceptionalEventType (aEventLabel);
+  Result := GetExceptionalEventType (EventLabel);
 end;
 
 

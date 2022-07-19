@@ -11,25 +11,21 @@ uses
 const
   LogFileNameMask = 'SURADNIK*.LOG';    // filename mask so that I would fetch log files ONLY
 
+
 type
   TLogFiles<T: TLogFile> = class (TObjectList<T>)
     private
       DirectoryName: string;
+      LogMemo: TMemo;
+      procedure AppendToMemo (const LogFileName: string);
     public
-      constructor Create (const aDirectoryName:string);
-      procedure ImportLogsIntoSQL;
-      procedure LoadNewLogFiles;
+      constructor Create (const aDirectoryName:string; const Memo: TMemo);
+      procedure InsertNewLogsIntoSQLDatabase;
+      procedure ReadLogFilesFromDisk;
   end;
 
-var
-  LogFiles: TLogFiles<TLogFile>;
-  LogMemo: TMemo;
-  LogForm: TForm;
 
-
-procedure CloseLogFiles;
-procedure ImportLogsIntoSQL;
-procedure LoadNewLogFiles (const DirectoryName:string);
+procedure InsertNewLogFilesIntoSQLDatabase (const DirectoryName: string; const Memo: TMemo);
 
 
 implementation
@@ -39,44 +35,41 @@ uses
   itSystem;
 
 
-procedure CloseLogFiles;
+procedure InsertNewLogFilesIntoSQLDatabase (const DirectoryName: string; const Memo: TMemo);
+var
+  LogFiles: TLogFiles<TLogFile>;
 begin
+  LogFiles := TLogFiles<TLogFile>.Create (DirectoryName, Memo);
+  LogFiles.ReadLogFilesFromDisk;
+  LogFiles.InsertNewLogsIntoSQLDatabase;
   FreeAndNil (LogFiles);
 end;
 
 
-procedure ImportLogsIntoSQL;
-begin
-  LogFiles.ImportLogsIntoSQL;
-end;
-
-
-procedure LoadNewLogFiles (const DirectoryName:string);
-begin
-  if LogFiles = nil then
-    LogFiles := TLogFiles<TLogFile>.Create (DirectoryName);
-
-  LogFiles.LoadNewLogFiles;
-end;
-
-
-constructor TLogFiles<T>.Create (const aDirectoryName:string);
+constructor TLogFiles<T>.Create (const aDirectoryName:string; const Memo: TMemo);
 begin
   inherited Create;
   DirectoryName := aDirectoryName;
+  LogMemo := Memo;
 end;
 
 
-procedure TLogFiles<T>.ImportLogsIntoSQL;
+procedure TLogFiles<T>.AppendToMemo (const LogFileName: string);
+begin
+  LogMemo.Text := LogMemo.Text + CrLf + LogFileName;
+end;
+
+
+procedure TLogFiles<T>.InsertNewLogsIntoSQLDatabase;
 var
   i: integer;
 begin
   for i := 0 to Count - 1 do
-    Items[i].ImportLogIntoSQL;
+    Items[i].InsertNewLogIntoSQLDatabase;
 end;
 
 
-procedure TLogFiles<T>.LoadNewLogFiles;
+procedure TLogFiles<T>.ReadLogFilesFromDisk;
 var
   SearchRec: TSearchRec;
 begin
@@ -85,15 +78,11 @@ begin
 
   repeat
     Add (TLogFile.Create (DirectoryName, SearchRec.Name));
-    LogMemo.Text := LogMemo.Text + CrLf + SearchRec.Name;
+    AppendToMemo (SearchRec.Name);
   until FindNext (SearchRec) <> 0;
 
   findClose (SearchRec);
 end;
-
-
-initialization
-  LogFiles := nil;
 
 
 end.

@@ -9,17 +9,16 @@ uses
 
 type
   TMainForm = class (TForm)
-    Memo: TMemo;
-    ButtonObrada: TButton;
-    EditDirectory: TEdit;
-    Label1: TLabel;
-    LabelDirectory: TLabel;
-    procedure ButtonObradaClick (Sender: TObject);
-  private
-    { Private declarations }
-  public
-    { Public declarations }
+    private
+      MemoLogFiles: TMemo;
+      ButtonLoadAndImport: TButton;
+      EditDirectory: TEdit;
+      LabelLogFiles: TLabel;
+      LabelDirectory: TLabel;
+      procedure ButtonLoadAndImportClick (Sender: TObject);
+    public
   end;
+
 
 var
   MainForm: TMainForm;
@@ -33,14 +32,11 @@ uses
 {$R *.dfm}
 
 
-procedure TMainForm.ButtonObradaClick (Sender: TObject);
+procedure TMainForm.ButtonLoadAndImportClick (Sender: TObject);
 begin
-  ButtonObrada.Enabled := false;
-  LogMemo := Memo;
-  LoadNewLogFiles (EditDirectory.Text);
-  ImportLogsIntoSQL;
-  CloseLogFiles;
-  ButtonObrada.Enabled := true;
+  ButtonLoadAndImport.Enabled := false;
+  InsertNewLogFilesIntoSQLDatabase (EditDirectory.Text, MemoLogFiles);
+  ButtonLoadAndImport.Enabled := true;
 end;
 
 

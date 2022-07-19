@@ -77,7 +77,7 @@ var
   i: integer;
 begin
   i := Length (EventString);
-  while Ord (EventString[i]) in [48..57] do
+  while Ord (EventString[i]) in [48..57] do     // '0'..'9'
     Dec (i);
   Result := Length (EventString) - i;
 end;

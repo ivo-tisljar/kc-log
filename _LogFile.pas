@@ -9,8 +9,9 @@ uses
 
 const
   RemoteSessionFileNameLength = 28;   // length of filename for log of remote session
-  DateOffset = -9;                    // character offset (in filename) from the length to the beginning of the date
+  DateOffset = -9;                    // character offset (in filename) from the length of filename to the beginning of the date
   Century0000 = 20000000;             // addition to date extracted from filename (in format yymmdd) to get date in format yyyymmdd
+
 
 type
   TLogFile = class (TObject)
@@ -21,16 +22,16 @@ type
       LogEvents: TLogEvents<TLogEvent>;
       constructor Create (const aPin: byte; const aIsRemote: boolean; const aDate: integer); overload;
       constructor Create (const FileName: string); overload;
-      function    GetDoesLogFileExistsSQL: string;
-      function    GetInsertSQL: string;
-      function    GetInsertedIDSQL: string;
       function    LogFileExists: boolean;
       procedure   ParseLogFile (const DirectoryName, FileName: string);
       procedure   ParseStringList (const StringList: TStringList);
+      function    SQLDoesLogFileExists: string;
+      function    SQLInsert: string;
+      function    SQLInsertedID: string;
     public
       constructor Create (const DirectoryName, FileName: string); overload;
       destructor  Destroy; override;
-      procedure   ImportLogIntoSQL;
+      procedure   InsertNewLogIntoSQLDatabase;
   end;
 
 
@@ -75,46 +76,20 @@ begin
 end;
 
 
-function TLogFile.GetDoesLogFileExistsSQL: string;
-begin
-  Result := 'SELECT ' +
-                'Count (*) AS RecCount ' +
-            'FROM ' +
-                'LogFile ' +
-            'WHERE ' +
-                'PinID = ' + IntToStr (Pin) + ' And Date = ' + IntToStr (Date) + ' And IsRemote = ' + IntToStr (Ord (IsRemote)) + ';';
-end;
-
-
-function TLogFile.GetInsertSQL: string;
-begin
-  Result := 'INSERT INTO LogFile (PinID, IsRemote, Date) Values (' +
-    IntToStr (Pin) + ',' +
-    IntToStr (Ord (IsRemote)) + ',' +
-    IntToStr (Date) + ');';
-end;
-
-
-function TLogFile.GetInsertedIDSQL: string;
-begin
-  Result := 'SELECT SCOPE_IDENTITY () AS LogFileID;';
-end;
-
-
-procedure TLogFile.ImportLogIntoSQL;
+procedure TLogFile.InsertNewLogIntoSQLDatabase;
 var
   LogFileID: integer;
 begin
   if LogFileExists then
     Exit;
-  LogFileID := DataLink.ExecCommandAndReturnInteger (GetInsertSQL + GetInsertedIDSQL, 'LogFileID');
+  LogFileID := DataLink.ExecCommandAndReturnInteger (SQLInsert + SQLInsertedID, 'LogFileID');
   DataLink.ExecCommand (LogEvents.GetInsertSQL (LogFileID));
 end;
 
 
 function TLogFile.LogFileExists: boolean;
 begin
-  Result := (DataLink.ExecCommandAndReturnInteger (GetDoesLogFileExistsSQL, 'RecCount') <> 0);
+  Result := (DataLink.ExecCommandAndReturnInteger (SQLDoesLogFileExists, 'RecCount') <> 0);
 end;
 
 
@@ -143,6 +118,32 @@ var
 begin
   for i := 0 to StringList.Count - 1 do
     LogEvents.AddEvent (StringList[i]);
+end;
+
+
+function TLogFile.SQLDoesLogFileExists: string;
+begin
+  Result := 'SELECT ' +
+                'Count (*) AS RecCount ' +
+            'FROM ' +
+                'LogFile ' +
+            'WHERE ' +
+                'PinID = ' + IntToStr (Pin) + ' And Date = ' + IntToStr (Date) + ' And IsRemote = ' + IntToStr (Ord (IsRemote)) + ';';
+end;
+
+
+function TLogFile.SQLInsert: string;
+begin
+  Result := 'INSERT INTO LogFile (PinID, IsRemote, Date) Values (' +
+    IntToStr (Pin) + ',' +
+    IntToStr (Ord (IsRemote)) + ',' +
+    IntToStr (Date) + ');';
+end;
+
+
+function TLogFile.SQLInsertedID: string;
+begin
+  Result := 'SELECT SCOPE_IDENTITY () AS LogFileID;';
 end;
 
 

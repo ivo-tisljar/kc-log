@@ -12,12 +12,13 @@ object MainForm: TMainForm
   Font.Style = []
   PixelsPerInch = 96
   TextHeight = 15
-  object Label1: TLabel
+  object LabelLogFiles: TLabel
     Left = 416
     Top = 16
-    Width = 34
+    Width = 46
     Height = 15
-    Caption = 'Label1'
+    Caption = 'Log Files'
+    FocusControl = MemoLogFiles
   end
   object LabelDirectory: TLabel
     Left = 24
@@ -27,24 +28,22 @@ object MainForm: TMainForm
     Caption = 'Directory'
     FocusControl = EditDirectory
   end
-  object Memo: TMemo
+  object MemoLogFiles: TMemo
     Left = 416
     Top = 37
     Width = 369
     Height = 388
-    Lines.Strings = (
-      'Memo')
     ScrollBars = ssVertical
     TabOrder = 0
   end
-  object ButtonObrada: TButton
+  object ButtonLoadAndImport: TButton
     Left = 24
-    Top = 183
+    Top = 207
     Width = 369
     Height = 25
-    Caption = 'Obrada'
+    Caption = 'Load new log files and import them to SQL database'
     TabOrder = 1
-    OnClick = ButtonObradaClick
+    OnClick = ButtonLoadAndImportClick
   end
   object EditDirectory: TEdit
     Left = 24

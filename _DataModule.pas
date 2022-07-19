@@ -10,13 +10,14 @@ uses
 
 type
   TDataLink = class (TDataModule)
-    FDConnection: TFDConnection;
-    FDQuery: TFDQuery;
-  private
-  public
-    procedure ExecCommand (const SQL: string);
-    function  ExecCommandAndReturnInteger (const SQL, FieldName: string): integer;
+    private
+      FDConnection: TFDConnection;
+      FDQuery: TFDQuery;
+    public
+      procedure ExecCommand (const SQL: string);
+      function  ExecCommandAndReturnInteger (const SQL, FieldName: string): integer;
   end;
+
 
 var
   DataLink: TDataLink;
